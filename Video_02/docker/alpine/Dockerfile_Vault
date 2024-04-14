@@ -1,0 +1,23 @@
+FROM theautomationrules/custom-alpine:0.1.0
+
+LABEL org.opencontainers.image.authors="The Automation Rules <theautomationrules@gmail.com>" \
+      org.opencontainers.image.url="http://www.theautomationrules.com/" \
+      org.opencontainers.image.title="custom-alpine" \
+      org.opencontainers.image.description="Docker Custom Vault Image"
+
+ENV ARCH="arm64"
+ENV USER="automation"
+
+ENV VAULT_VERSION=1.16.1
+
+RUN apk add --update unzip wget git bash openssh
+
+RUN ["mkdir", "-p", "/home/${USER}"]
+
+ADD https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_${ARCH}.zip ./
+RUN unzip vault_${VAULT_VERSION}_linux_arm64.zip -d /home/${USER}/
+RUN install /home/${USER}/vault /usr/bin/vault
+RUN rm -f vault_${VAULT_VERSION}_linux_${ARCH}.zip
+RUN rm -f /home/${USER}/vault
+
+WORKDIR /home/${USER}/
